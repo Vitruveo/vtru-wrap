@@ -193,7 +193,7 @@ export default function Home(props:Props) {
             current={currentFrom}
             type="usdc"
             max={toDisplay(usdcBalance)}
-            value={String(currentFrom === 'usdc' ? usdcValue : Math.max(0,Number(usdcValue)-0.25))}
+            value={String(currentFrom === 'usdc' ? usdcValue : Math.max(0,Number(usdcValue)-0.25).toFixed(2))}
             setValue={setUsdcValue}
             tokenSymbol="USDC"
             tokenBalance={toDisplay(usdcBalance)}
@@ -216,7 +216,7 @@ export default function Home(props:Props) {
             current={currentFrom}
             type="usdcpol"
             max={toDisplay(usdcPolBalance)}
-            value={String(currentFrom === 'usdcpol' ? usdcValue : Math.max(0,Number(usdcValue)-0.25))}
+            value={String(currentFrom === 'usdcpol' ? usdcValue : Math.max(0,Number(usdcValue)-0.25).toFixed(2))}
             setValue={setUsdcValue}
             tokenSymbol="USDC.pol"
             tokenBalance={toDisplay(usdcPolBalance)}
@@ -231,7 +231,7 @@ export default function Home(props:Props) {
             fontSize="2xl"
             colorScheme="purple"
             rounded="xl"
-            isDisabled={loading}
+            isDisabled={loading || Number(usdcValue) <= 0.25}
             style={{ fontWeight: 200, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
           >
             <img src='/images/usdc-logo.png' style={{width: '30px', marginRight: '10px'}} />
