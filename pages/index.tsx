@@ -72,11 +72,13 @@ export default function Home(props:Props) {
       }
     }
 
-      const interval = setInterval(() => {
-        fetchBalances()
-      }, loading ? 5000 : 15000);
-  
-      return () => clearInterval(interval);
+    const interval = setInterval(() => {
+      fetchBalances()
+    }, loading ? 5000 : 15000);
+
+    fetchBalances();
+
+    return () => clearInterval(interval);
   
   }, [address, loading]);
 
@@ -95,6 +97,16 @@ export default function Home(props:Props) {
 
   const toDisplay = (value:number) => {
     return (value/10**6).toFixed(2);
+  }
+
+  const inputInvalid = () => {
+    let tooBig = true;
+    if (currentFrom === 'usdc') {
+      tooBig = (Number(usdcValue) - 0.25) > Number(usdcBalance/10**6);
+    } else {
+      tooBig = (Number(usdcValue) - 0.25) > Number(usdcPolBalance/10**6);
+    }
+    return Number(usdcValue) <= 0.25 || tooBig;
   }
 
   // Approve Polygon
@@ -231,7 +243,7 @@ export default function Home(props:Props) {
             fontSize="2xl"
             colorScheme="purple"
             rounded="xl"
-            isDisabled={loading || Number(usdcValue) <= 0.25}
+            isDisabled={loading || inputInvalid()}
             style={{ fontWeight: 200, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
           >
             <img src='/images/usdc-logo.png' style={{width: '30px', marginRight: '10px'}} />
