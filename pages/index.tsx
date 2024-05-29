@@ -185,7 +185,7 @@ export default function Home(props:Props) {
             setValue={setUsdcValue}
             tokenSymbol="USDC"
             tokenBalance={toDisplay(usdcBalance)}
-            network="Polygon"
+            network="polygon"
           />
 
           <Button
@@ -208,7 +208,7 @@ export default function Home(props:Props) {
             setValue={setUsdcValue}
             tokenSymbol="USDC.pol"
             tokenBalance={toDisplay(usdcPolBalance)}
-            network="Vitruveo"
+            network="vitruveo"
             />
         </Flex>
 
