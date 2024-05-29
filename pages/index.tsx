@@ -20,7 +20,7 @@ import {
 } from "@thirdweb-dev/react";
 import { useState, useEffect } from "react";
 
-export default function Home({ chainSwitchHandler }) {
+export default function Home(chainSwitchHandler:any) {
 
   const toast = useToast();
   const address = useAddress();
