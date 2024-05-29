@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const [activeChain, setActiveChain] = useState(POLYGON_CHAIN);
 
-  const handleChainSwitch = (chain:any) => {
+  const handleChainSwitch:any = (chain:any) => {
     setActiveChain(chain);
   }
 

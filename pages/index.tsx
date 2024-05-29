@@ -20,7 +20,11 @@ import {
 } from "@thirdweb-dev/react";
 import { useState, useEffect } from "react";
 
-export default function Home(chainSwitchHandler:any) {
+interface Props {
+  chainSwitchHandler: Function
+}
+
+export default function Home(props:Props) {
 
   const toast = useToast();
   const address = useAddress();
@@ -66,14 +70,14 @@ export default function Home(chainSwitchHandler:any) {
   }, [address]);
 
   useEffect(() => {
-    async function switchChain() {
+    async function activateChain() {
       if (currentFrom === "usdc") {
-        chainSwitchHandler(POLYGON_CHAIN);
+        props.chainSwitchHandler(POLYGON_CHAIN);
       } else {
-        chainSwitchHandler(VITRUVEO_CHAIN);       
+        props.chainSwitchHandler(VITRUVEO_CHAIN);       
       }
     }
-    switchChain();
+    activateChain();
 
   }, [currentFrom]);
 
@@ -181,6 +185,7 @@ export default function Home(chainSwitchHandler:any) {
             setValue={setUsdcValue}
             tokenSymbol="USDC"
             tokenBalance={toDisplay(usdcBalance)}
+            network="Polygon"
           />
 
           <Button
@@ -203,6 +208,7 @@ export default function Home(chainSwitchHandler:any) {
             setValue={setUsdcValue}
             tokenSymbol="USDC.pol"
             tokenBalance={toDisplay(usdcPolBalance)}
+            network="Vitruveo"
             />
         </Flex>
 

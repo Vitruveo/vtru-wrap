@@ -9,6 +9,7 @@ type Props = {
   setValue: (value: string) => void;
   max?: string;
   value: string;
+  network: string;
 };
 
 export default function SwapInput({
@@ -19,6 +20,7 @@ export default function SwapInput({
   value,
   current,
   max,
+  network,
 }: Props) {
   return (
     <HStack w="full" bgColor="gray.700" rounded="2xl" px="5">
@@ -41,7 +43,7 @@ export default function SwapInput({
       )}
       <div style={{ marginLeft: '20px', width: current === type ? '250px' : '200px'}}>
         <p>{tokenSymbol} Balance:</p>
-        <p>{tokenBalance}</p>
+        <p><img src={`/images/${network}.png`} alt={`${network}`} style={{ display: 'inline', height: '15px' }}/> {tokenBalance}</p>
       </div>
     </HStack>
   );
