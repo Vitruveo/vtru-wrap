@@ -19,6 +19,7 @@ import {
   useSwitchChain
 } from "@thirdweb-dev/react";
 import { useState, useEffect } from "react";
+import { _0xhashTestnet } from "@thirdweb-dev/chains";
 
 interface Props {
   chainSwitchHandler: Function
@@ -51,23 +52,34 @@ export default function Home(props:Props) {
   // Need to read from both networks regardless of which is connected so we fall back to SDK
   useEffect(() => {
     async function fetchBalances() {
-    
-      const polygonUSDC = await polygonProvider.getContract(USDC_TOKEN_CONTRACT);
-      const vitruveoUSDC = await vitruveoProvider.getContract(USDCPOL_TOKEN_CONTRACT);
-      
-      setUsdcBalance(await polygonUSDC.call('balanceOf', [address]));
-      setUsdcPolBalance(await vitruveoUSDC.call('balanceOf', [address]));
-
-      setUsdcAllowance(await polygonUSDC.call('allowance', [address, VIA_POLYGON_CONTRACT]));
-      setUsdcPolAllowance(await vitruveoUSDC.call('allowance', [address, VIA_VITRUVEO_CONTRACT]));      
-    }
       if (!address) {
         setUsdcBalance(0);
         setUsdcPolBalance(0);
-      } else {
-        fetchBalances();
-      }  
-  }, [address]);
+        return;
+      }
+
+      try {
+        const polygonUSDC = await polygonProvider.getContract(USDC_TOKEN_CONTRACT);
+        const vitruveoUSDC = await vitruveoProvider.getContract(USDCPOL_TOKEN_CONTRACT);
+        
+        setUsdcBalance(await polygonUSDC.call('balanceOf', [address]));
+        setUsdcPolBalance(await vitruveoUSDC.call('balanceOf', [address]));
+  
+        setUsdcAllowance(await polygonUSDC.call('allowance', [address, VIA_POLYGON_CONTRACT]));
+        setUsdcPolAllowance(await vitruveoUSDC.call('allowance', [address, VIA_VITRUVEO_CONTRACT]));        
+      } catch(e) {
+
+      }
+    }
+
+      const interval = setInterval(() => {
+        fetchBalances()
+      }, loading ? 5000 : 15000);
+  
+      return () => clearInterval(interval);
+  
+  }, [address, loading]);
+
 
   useEffect(() => {
     async function activateChain() {
@@ -119,7 +131,7 @@ export default function Home(props:Props) {
         toast({
           status: "success",
           title: "Bridge Successful",
-          description: `You have successfully bridged your USDC from Polygon to USDC.pol on Vitruveo`,
+          description: `You have successfully bridged your USDC from Polygon to USDC.pol on Vitruveo. Funds will arrive in 2-3 mins.`,
         });
       } else {
         if (!isMismatched) {
@@ -133,7 +145,7 @@ export default function Home(props:Props) {
         toast({
           status: "success",
           title: "Bridge Successful",
-          description: `You have successfully bridged your USDC.pol from Vitruveo to USDC on Polygon`,
+          description: `You have successfully bridged your USDC.pol from Vitruveo to USDC on Polygon. Funds will arrive in 2-3 mins.`,
         });
       }
       setLoading(false);
@@ -181,7 +193,7 @@ export default function Home(props:Props) {
             current={currentFrom}
             type="usdc"
             max={toDisplay(usdcBalance)}
-            value={usdcValue}
+            value={String(currentFrom === 'usdc' ? usdcValue : Math.max(0,Number(usdcValue)-0.25))}
             setValue={setUsdcValue}
             tokenSymbol="USDC"
             tokenBalance={toDisplay(usdcBalance)}
@@ -204,7 +216,7 @@ export default function Home(props:Props) {
             current={currentFrom}
             type="usdcpol"
             max={toDisplay(usdcPolBalance)}
-            value={usdcValue}
+            value={String(currentFrom === 'usdcpol' ? usdcValue : Math.max(0,Number(usdcValue)-0.25))}
             setValue={setUsdcValue}
             tokenSymbol="USDC.pol"
             tokenBalance={toDisplay(usdcPolBalance)}
@@ -220,7 +232,7 @@ export default function Home(props:Props) {
             colorScheme="purple"
             rounded="xl"
             isDisabled={loading}
-            style={{ fontWeight: 200, backgroundColor: '#4a2367', color: '#ffffff'}}
+            style={{ fontWeight: 200, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
           >
             <img src='/images/usdc-logo.png' style={{width: '30px', marginRight: '10px'}} />
             {loading ? <Spinner /> : " Bridge USDC"}
@@ -231,7 +243,7 @@ export default function Home(props:Props) {
             theme="dark"
           />
         )}
-        <p><sup>*</sup> Each bridge transfer takes 1-2 mins and costs US$0.25 plus gas.</p>
+        <p><sup>*</sup> Each bridge transfer takes 2-3 mins and costs US$0.25 plus gas.</p>
       </Flex>
     </>
   );
