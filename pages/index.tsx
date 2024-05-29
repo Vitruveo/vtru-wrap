@@ -162,7 +162,7 @@ export default function Home(props:Props) {
       <Flex
         direction="column"
         gap="5"
-        mt="40"
+        mt="10"
         p="5"
         mx="auto"
         maxW={{ base: "sm", md: "xl" }}

@@ -24,6 +24,7 @@ export default function SwapInput({
 }: Props) {
   return (
     <HStack w="full" bgColor="gray.700" rounded="2xl" px="5">
+      <img src={`/images/${network}.png`} alt={`${network}`} style={{ display: 'inline', height: '25px' }}/> 
       <Input
         type="number"
         placeholder="0.0"
@@ -43,7 +44,7 @@ export default function SwapInput({
       )}
       <div style={{ marginLeft: '20px', width: current === type ? '250px' : '200px'}}>
         <p>{tokenSymbol} Balance:</p>
-        <p><img src={`/images/${network}.png`} alt={`${network}`} style={{ display: 'inline', height: '15px' }}/> {tokenBalance}</p>
+        <p>{tokenBalance}</p>
       </div>
     </HStack>
   );

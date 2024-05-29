@@ -14,7 +14,7 @@ export default function Navbar() {
         py="5"
         px={{ base: "5", xl: "0" }}
       >
-        <img src="/images/logo.png" alt="Vitruveo logo" style={{height: '80px'}} />
+        <img src="/images/logo.png" alt="Vitruveo logo" style={{height: '45px'}} />
         <ConnectWallet theme="dark" />
       </Flex>
     </Box>
