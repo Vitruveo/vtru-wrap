@@ -244,10 +244,10 @@ export default function Home(props:Props) {
             colorScheme="purple"
             rounded="xl"
             isDisabled={loading || inputInvalid()}
-            style={{ fontWeight: 200, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
+            style={{ fontWeight: 400, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
           >
-            <img src='/images/usdc-logo.png' style={{width: '30px', marginRight: '10px'}} />
-            {loading ? <Spinner /> : " Bridge USDC"}
+            {/* <img src='/images/usdc-logo.png' style={{width: '30px', marginRight: '10px'}} /> */}
+            {loading ? <Spinner /> : " Bridge Token"}
           </Button>
         ) : (
           <ConnectWallet
