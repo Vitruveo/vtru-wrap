@@ -257,7 +257,7 @@ export default function Home(props:Props) {
         )}
         <p><sup>*</sup> Each bridge transfer takes 2-3 mins and costs US$0.25 plus gas.</p>
       </Flex>
-      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}><a href="https://www.circle.com/blog/bridged-usdc-standard" target="_new" style={{textDecoration: 'underline'}}>Bridged USDC Standard</a> powered by <a href='https://cryptolink.tech/' target='_new'>VIA Labs</a>. &nbsp;&nbsp;&nbsp;Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a>.</div>
+      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}><a href="https://www.circle.com/blog/bridged-usdc-standard" target="_new" style={{textDecoration: 'underline'}}>Bridged USDC Standard</a> powered by <a href='https://cryptolink.tech/' target='_new'>VIA Labs</a>. &nbsp; &nbsp; Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a>.</div>
     </>
   );
 }
