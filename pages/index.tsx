@@ -205,7 +205,7 @@ export default function Home(props:Props) {
             current={currentFrom}
             type="usdc"
             max={toDisplay(usdcBalance)}
-            value={String(currentFrom === 'usdc' ? usdcValue : Math.max(0,Number(usdcValue)-0.25).toFixed(2))}
+            value={String(currentFrom === 'usdc' ? Math.floor(Number(usdcValue)).toFixed(0) : Math.max(0,Number(usdcValue)-0.25).toFixed(2))}
             setValue={setUsdcValue}
             tokenSymbol="USDC"
             tokenBalance={toDisplay(usdcBalance)}
@@ -228,7 +228,7 @@ export default function Home(props:Props) {
             current={currentFrom}
             type="usdcpol"
             max={toDisplay(usdcPolBalance)}
-            value={String(currentFrom === 'usdcpol' ? usdcValue : Math.max(0,Number(usdcValue)-0.25).toFixed(2))}
+            value={String(currentFrom === 'usdcpol' ? Math.floor(Number(usdcValue)).toFixed(0) : Math.max(0,Number(usdcValue)-0.25).toFixed(2))}
             setValue={setUsdcValue}
             tokenSymbol="USDC.pol"
             tokenBalance={toDisplay(usdcPolBalance)}
