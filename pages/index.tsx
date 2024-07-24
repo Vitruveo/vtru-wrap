@@ -9,17 +9,16 @@ import {
   Spinner,
   useToast,
 } from "@chakra-ui/react";
-import { POLYGON_CHAIN, VITRUVEO_CHAIN, VIA_POLYGON_CONTRACT, VIA_VITRUVEO_CONTRACT, USDCPOL_TOKEN_CONTRACT, USDC_TOKEN_CONTRACT, VIA_ABI, USDC_ABI } from "../const/details";
+import { VITRUVEO_CHAIN, WRAP_CONTRACT, WRAP_CONTRACT_ABI } from "../const/details";
 import {
   ConnectWallet,
   useAddress,
   useContract,
   useContractWrite,
-  useNetworkMismatch,
-  useSwitchChain
 } from "@thirdweb-dev/react";
 import { useState, useEffect } from "react";
 import { _0xhashTestnet } from "@thirdweb-dev/chains";
+import { ethers } from "ethers";
 
 interface Props {
   chainSwitchHandler: Function
@@ -29,46 +28,37 @@ export default function Home(props:Props) {
 
   const toast = useToast();
   const address = useAddress();
-  const isMismatched = useNetworkMismatch();
-  const switchChain = useSwitchChain();
 
-  const usdcAbi = JSON.parse(USDC_ABI);
-  const viaAbi = JSON.parse(VIA_ABI);
+  const wrapContractAbi = JSON.parse(WRAP_CONTRACT_ABI);
 
-  const [usdcBalance, setUsdcBalance] = useState(0);
-  const [usdcPolBalance, setUsdcPolBalance] = useState(0);
-  const [usdcAllowance, setUsdcAllowance] = useState(0);
-  const [usdcPolAllowance, setUsdcPolAllowance] = useState(0);
-  
-  const [usdcValue, setUsdcValue] = useState<string>("0");
+  const [wrappedBalance, setWrappedBalance] = useState(0);
+  const [unwrappedBalance, setUnwrappedBalance] = useState(0);
 
-  const [currentFrom, setCurrentFrom] = useState<string>("usdc");
+  const [swapValue, setSwapValue] = useState<string>("0");
+
+  const [currentFrom, setCurrentFrom] = useState<string>("wrapped");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const polygonProvider = new ThirdwebSDK(POLYGON_CHAIN);
   const vitruveoProvider = new ThirdwebSDK(VITRUVEO_CHAIN);
 
-  
   // Need to read from both networks regardless of which is connected so we fall back to SDK
   useEffect(() => {
     async function fetchBalances() {
       if (!address) {
-        setUsdcBalance(0);
-        setUsdcPolBalance(0);
+        setWrappedBalance(0);
+        setUnwrappedBalance(0);
         return;
       }
 
       try {
-        const polygonUSDC = await polygonProvider.getContract(USDC_TOKEN_CONTRACT);
-        const vitruveoUSDC = await vitruveoProvider.getContract(USDCPOL_TOKEN_CONTRACT);
-        
-        setUsdcBalance(await polygonUSDC.call('balanceOf', [address]));
-        setUsdcPolBalance(await vitruveoUSDC.call('balanceOf', [address]));
-  
-        setUsdcAllowance(await polygonUSDC.call('allowance', [address, VIA_POLYGON_CONTRACT]));
-        setUsdcPolAllowance(await vitruveoUSDC.call('allowance', [address, VIA_VITRUVEO_CONTRACT]));        
-      } catch(e) {
+        const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT);
+        const wrappedBalance = await wrapContract.call('balanceOf', [address]);
+        setWrappedBalance(parseFloat(ethers.utils.formatEther(wrappedBalance)));
 
+        const balance = await vitruveoProvider.getBalance(address);
+        setUnwrappedBalance(Number(balance.displayValue));  
+      } catch(e) {
+        console.error(e);
       }
     }
 
@@ -82,82 +72,55 @@ export default function Home(props:Props) {
   
   }, [address, loading]);
 
-
   useEffect(() => {
     async function activateChain() {
-      if (currentFrom === "usdc") {
-        props.chainSwitchHandler(POLYGON_CHAIN);
-      } else {
-        props.chainSwitchHandler(VITRUVEO_CHAIN);       
-      }
+      props.chainSwitchHandler(VITRUVEO_CHAIN);
     }
     activateChain();
 
   }, [currentFrom]);
 
-  const toDisplay = (value:number) => {
-    return (value/10**6).toFixed(2);
-  }
-
   const inputInvalid = () => {
     let tooBig = true;
-    if (currentFrom === 'usdc') {
-      tooBig = (Number(usdcValue) - 0.25) > Number(usdcBalance/10**6);
+    if (currentFrom === 'wrapped') {
+      tooBig = Number(swapValue) > wrappedBalance;
     } else {
-      tooBig = (Number(usdcValue) - 0.25) > Number(usdcPolBalance/10**6);
+      tooBig = Number(swapValue) > unwrappedBalance;
     }
-    return Number(usdcValue) <= 0.25 || tooBig;
+    return Number(swapValue) <= 0 || tooBig;
   }
 
-  // Approve Polygon
-  const { contract: usdcContract } = useContract(USDC_TOKEN_CONTRACT, usdcAbi );
-  const { mutateAsync: approveUsdcSpending } = useContractWrite(usdcContract, "approve");
+  const { contract: wrapContract } = useContract(WRAP_CONTRACT, wrapContractAbi);
 
-  // Bridge Polygon
-  const { contract: viaPolygonContract } = useContract(VIA_POLYGON_CONTRACT, viaAbi );
-  const { mutateAsync: bridgeUSDCToUSDCPOL } = useContractWrite(viaPolygonContract, "bridge");
-
-  // Approve Vitruveo
-  const { contract: usdcPolContract } = useContract(USDCPOL_TOKEN_CONTRACT, usdcAbi);
-  const { mutateAsync: approveUsdcPolSpending } = useContractWrite(usdcPolContract, "approve");        
-
-  // Bridge Vitruveo
-  const { contract: viaVitruveoContract } = useContract(VIA_VITRUVEO_CONTRACT, viaAbi );
-  const { mutateAsync: bridgeUSDCPOLToUSDC } = useContractWrite(viaVitruveoContract, "bridge");      
+  const { mutateAsync: wrap } = useContractWrite(wrapContract, "wrap"); 
+  const { mutateAsync: unwrap } = useContractWrite(wrapContract, "unwrap"); 
 
   const executeBridge = async () => {
     setLoading(true);
     try {
-      const amount = Number(usdcValue) * 10**6;
-      if (currentFrom === "usdc") {
-        if (isMismatched) {
-          await switchChain(POLYGON_CHAIN.chainId);
-        }
+      const amount = Number(swapValue);
+      if (currentFrom === "unwrapped") {
           
-        if (Number(usdcAllowance) < amount) {
-          await approveUsdcSpending({args: [VIA_POLYGON_CONTRACT, amount] });
-        }
-
-        await bridgeUSDCToUSDCPOL({ args: [address, amount] });
-
-        toast({
-          status: "success",
-          title: "Bridge Successful",
-          description: `You have successfully bridged your USDC from Polygon to USDC.pol on Vitruveo. Funds will arrive in 2-3 mins.`,
+        await wrap({
+          args: [],
+          overrides: {
+            value: ethers.utils.parseUnits(amount.toString(), 18)
+          }
         });
-      } else {
-        if (!isMismatched) {
-          await switchChain(VITRUVEO_CHAIN.chainId);
-        }
-        if (Number(usdcPolAllowance) < amount) {
-          await approveUsdcPolSpending({ args: [VIA_VITRUVEO_CONTRACT, amount] });
-        }
-        await bridgeUSDCPOLToUSDC({ args: [address, amount] });
 
         toast({
           status: "success",
-          title: "Bridge Successful",
-          description: `You have successfully bridged your USDC.pol from Vitruveo to USDC on Polygon. Funds will arrive in 2-3 mins.`,
+          title: "Wrap Successful",
+          description: `You have successfully wrapped your VITRU.`,
+        });
+
+      } else {
+        await unwrap({ args: [ethers.utils.parseUnits(amount.toString(), 18)] });
+
+        toast({
+          status: "success",
+          title: "Unwrap Successful",
+          description: `You have successfully unwrapped your wVTRU.`,
         });
       }
       setLoading(false);
@@ -165,7 +128,7 @@ export default function Home(props:Props) {
       console.error(err);
       toast({
         status: "error",
-        title: "Bridge Failed",
+        title: currentFrom === 'unwrapped' ? "Wrap Failed" : "Unwrap Failed",
         description:
           "There was an error. Please try again.",
       });
@@ -174,9 +137,20 @@ export default function Home(props:Props) {
   };
 
   return (
-    <>
+    <div style={{
+      backgroundImage: "url('/images/bg_vitruveo1.jpg')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      width: '100vw',
+      height: '100vh',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      margin: 0,
+      padding: 0,
+    }}>
       <Head>
-        <title>Vitruveo USDC Bridge</title>
+        <title>Wrap/Unwrap VTRU</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -194,30 +168,31 @@ export default function Home(props:Props) {
         rounded="2xl"
         borderWidth="1px"
         borderColor="gray.600"
+        bg="gray.800"
       >
-              <h2 style={{fontSize: '24px', fontWeight: 600, margin: 'auto', marginBottom: '20px'}}>Vitruveo USDC Bridge</h2>
-        <p style={{marginBottom: 10}}>The Vitruveo USDC Bridge is a fast and easy way to bridge USDC (Polygon) to/from USDC.pol (Vitruveo).</p>
+        <h2 style={{ fontSize: '24px', fontWeight: 600, margin: 'auto', marginBottom: '20px', color: 'white' }}>Wrap/Unwrap VTRU</h2>
         <Flex
-          direction={currentFrom === "usdc" ? "column" : "column-reverse"}
+          direction={currentFrom === "wrapped" ? "column" : "column-reverse"}
           gap="3"
         >
+
           <SwapInput
             current={currentFrom}
-            type="usdc"
-            max={toDisplay(usdcBalance)}
-            value={String(currentFrom === 'usdc' ? Math.floor(Number(usdcValue)).toFixed(0) : Math.max(0,Math.floor(Number(usdcValue))-0.25).toFixed(2))}
-            setValue={setUsdcValue}
-            tokenSymbol="USDC"
-            tokenBalance={toDisplay(usdcBalance)}
-            network="polygon"
+            type="wrapped"
+            max={wrappedBalance.toFixed(2)}
+            value={String(Math.floor(Number(swapValue)).toFixed(0))}
+            setValue={setSwapValue}
+            tokenSymbol="wVTRU"
+            tokenBalance={wrappedBalance.toFixed(2)}
+            network="vitruveo"
           />
 
           <Button
-            onClick={() =>
-              currentFrom === "usdc"
-                ? setCurrentFrom("usdcpol")
-                : setCurrentFrom("usdc")
-            }
+            onClick={() => {
+              currentFrom === "wrapped"
+                ? setCurrentFrom("unwrapped")
+                : setCurrentFrom("wrapped")
+            }}
             maxW="5"
             mx="auto"
           >
@@ -226,14 +201,14 @@ export default function Home(props:Props) {
 
           <SwapInput
             current={currentFrom}
-            type="usdcpol"
-            max={toDisplay(usdcPolBalance)}
-            value={String(currentFrom === 'usdcpol' ? Math.floor(Number(usdcValue)).toFixed(0) : Math.max(0,Math.floor(Number(usdcValue))-0.25).toFixed(2))}
-            setValue={setUsdcValue}
-            tokenSymbol="USDC.pol"
-            tokenBalance={toDisplay(usdcPolBalance)}
+            type="unwrapped"
+            max={unwrappedBalance.toFixed(2)}
+            value={String(Math.floor(Number(swapValue)).toFixed(0))}
+            setValue={setSwapValue}
+            tokenSymbol="VTRU"
+            tokenBalance={unwrappedBalance.toFixed(2)}
             network="vitruveo"
-            />
+          />
         </Flex>
 
         {address ? (
@@ -246,8 +221,7 @@ export default function Home(props:Props) {
             isDisabled={loading || inputInvalid()}
             style={{ fontWeight: 400, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
           >
-            {/* <img src='/images/usdc-logo.png' style={{width: '30px', marginRight: '10px'}} /> */}
-            {loading ? <Spinner /> : " Bridge Token"}
+            {loading ? <Spinner /> : currentFrom === "wrapped" ? "Unwrap" : "Wrap"}
           </Button>
         ) : (
           <ConnectWallet
@@ -255,9 +229,8 @@ export default function Home(props:Props) {
             theme="dark"
           />
         )}
-        <p><sup>*</sup> Each bridge transfer takes 2-3 mins and costs US$0.25 plus gas.</p>
       </Flex>
-      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}><a href="https://www.circle.com/blog/bridged-usdc-standard" target="_new" style={{textDecoration: 'underline'}}>Bridged USDC Standard</a> powered by <a href='https://cryptolink.tech/' target='_new'>VIA Labs</a>. &nbsp; &nbsp; Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a>.</div>
-    </>
+      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a>.</div>
+    </ div>
   );
 }
