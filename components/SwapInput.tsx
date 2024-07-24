@@ -2,7 +2,7 @@ import { Button, HStack, Input } from "@chakra-ui/react";
 import React from "react";
 
 type Props = {
-  type: "usdc" | "usdcpol";
+  type: "wrapped" | "unwrapped";
   tokenSymbol?: string;
   tokenBalance: string
   current: string;
@@ -36,13 +36,13 @@ export default function SwapInput({
         isDisabled={current !== type}
         border="none"
         fontFamily="monospace"
-        style={{width: '300px'}}
+        style={{ width: '300px', color: 'white' }}
         _focus={{ boxShadow: "none" }}
       />
       {current === type && (
         <Button onClick={() => setValue(max || "0")}>Max</Button>
       )}
-      <div style={{ marginLeft: '20px', width: current === type ? '250px' : '200px'}}>
+      <div style={{ marginLeft: '20px', width: current === type ? '250px' : '200px', color: 'white' }}>
         <p>{tokenSymbol} Balance:</p>
         <p>{tokenBalance}</p>
       </div>
