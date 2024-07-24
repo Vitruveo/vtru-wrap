@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Navbar from "../components/NavBar";
 import SwapInput from "../components/SwapInput";
+import CircuitBreaker from "../components/CircuitBreaker";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 
 import {
@@ -111,7 +112,7 @@ export default function Home(props:Props) {
         toast({
           status: "success",
           title: "Wrap Successful",
-          description: `You have successfully wrapped your VITRU.`,
+          description: `You have successfully wrapped your VTRU.`,
         });
 
       } else {
@@ -136,6 +137,7 @@ export default function Home(props:Props) {
     }
   };
 
+  const headlineStyle={ fontSize: '24px', fontWeight: 600, margin: 'auto', marginBottom: '20px', color: 'white' }
   return (
     <div style={{
       backgroundImage: "url('/images/bg_vitruveo1.jpg')",
@@ -160,6 +162,12 @@ export default function Home(props:Props) {
       <Flex
         direction="column"
         gap="5"
+        mx="auto"
+        w="90%"
+      >
+      <Flex
+        direction="column"
+        gap="5"
         mt="10"
         p="5"
         mx="auto"
@@ -170,7 +178,7 @@ export default function Home(props:Props) {
         borderColor="gray.600"
         bg="gray.800"
       >
-        <h2 style={{ fontSize: '24px', fontWeight: 600, margin: 'auto', marginBottom: '20px', color: 'white' }}>Wrap/Unwrap VTRU</h2>
+        <h2 style={headlineStyle}>Wrap/Unwrap VTRU</h2>
         <Flex
           direction={currentFrom === "wrapped" ? "column" : "column-reverse"}
           gap="3"
@@ -211,6 +219,7 @@ export default function Home(props:Props) {
           />
         </Flex>
 
+
         {address ? (
           <Button
             onClick={executeBridge}
@@ -229,6 +238,29 @@ export default function Home(props:Props) {
             theme="dark"
           />
         )}
+      </Flex>
+      <Flex
+        direction="column"
+        gap="5"
+        mt="10"
+        p="5"
+        mx="auto"
+        maxW={{ base: "sm", md: "xl" }}
+        w="full"
+        rounded="2xl"
+        borderWidth="1px"
+        borderColor="gray.600"
+        bg="gray.800"
+      >
+        <h2 style={headlineStyle}>Circuit Breaker Analytics</h2>
+        <Flex
+          gap="3"
+          direction="column"
+        >
+          <CircuitBreaker />
+        </Flex>
+
+      </Flex>
       </Flex>
       <h2 style={{textAlign: 'center', padding: '5px', fontSize: '20px', fontWeight: 'bold', color: 'white'}}><a href="https://docs.google.com/spreadsheets/d/1JG5EuuEy5T4vxSiTR4ufN2NVEYw2hmpMeDwwcaa3qg8/edit?usp=sharing" target="_new">Circuit Breaker Constraints</a></h2>
       <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a> and <a href="https://www.neoncircus.xyz/" target="_new">Neon Circus</a>.</div>

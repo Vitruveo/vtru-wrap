@@ -4,6 +4,7 @@ import { ThirdwebProvider } from "@thirdweb-dev/react";
 import type { AppProps } from "next/app";
 import { useState } from "react";
 import '../styles/globals.css';
+import '../components/CircuitBreaker.css';
 
 export default function App({ Component, pageProps }: AppProps) {
 
