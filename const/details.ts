@@ -1,7 +1,7 @@
 import { Chain, Vitruveo } from "@thirdweb-dev/chains";
 
 export const VITRUVEO_CHAIN: Chain = Vitruveo;
-export const WRAP_CONTRACT: string = "0xC0C0A38067Ba977676AB4aFD9834dB030901bE2d";
+export const WRAP_CONTRACT: string = "0x3ccc3F22462cAe34766820894D04a40381201ef9";
 
 export const WRAP_CONTRACT_ABI: string = `[
 	{

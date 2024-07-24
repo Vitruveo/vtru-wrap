@@ -230,7 +230,7 @@ export default function Home(props:Props) {
           />
         )}
       </Flex>
-      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a>.</div>
+      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a> and <a href="https://www.neoncircus.xyz/" target="_new">Neon Circus</a>.</div>
     </ div>
   );
 }
