@@ -5,7 +5,7 @@ import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { useState, useEffect } from "react";
 import { _0xhashTestnet } from "@thirdweb-dev/chains";
 
-export default function UserInfo({account}) {
+export default function UserInfo({account}:any) {
   const DECIMALS = Math.pow(10,18);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [lastEpoch, setLastEpoch] = useState(0);
@@ -38,15 +38,15 @@ export default function UserInfo({account}) {
     <table className="stats">
       
       <tr>
-        <th className="statLabel">Last Wrap Block</th>
+        <th className="statLabel">Last User Wrap Block</th>
         <td className="statValue">{lastEpoch.toLocaleString()}</td>
-        <td className="statInfo">Last epoch when user wrapped.</td>
+        <td className="statInfo">Last block user wrapped.</td>
       </tr>
 
       <tr>
-        <th className="statLabel">Next Wrap Block</th>
+        <th className="statLabel">Next User Wrap Block</th>
         <td className="statValue">{nextEpoch.toLocaleString()}</td>
-        <td className="statInfo">Next epoch when user can wrap.</td>
+        <td className="statInfo">Next block user can wrap</td>
       </tr>
 
     </table>
