@@ -58,7 +58,7 @@ export default function CircuitBreaker() {
       <tr>
         <th className="statLabel">$wVTRU Price</th>
         <td className="statValue">${price.toFixed(2)}</td>
-        <td className="statInfo">Current price of VTRU at swap.vitruveo.xyz</td>
+        <td className="statInfo">Current price of VTRU rounded to $0.10</td>
       </tr>
 
       <tr>
