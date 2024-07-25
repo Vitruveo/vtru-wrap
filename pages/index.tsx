@@ -2,6 +2,7 @@ import Head from "next/head";
 import Navbar from "../components/NavBar";
 import SwapInput from "../components/SwapInput";
 import CircuitBreaker from "../components/CircuitBreaker";
+import UserInfo from "../components/UserInfo";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 
 import {
@@ -150,6 +151,7 @@ export default function Home(props:Props) {
       left: 0,
       margin: 0,
       padding: 0,
+      overflow: 'auto'
     }}>
       <Head>
         <title>Wrap/Unwrap VTRU</title>
@@ -165,102 +167,128 @@ export default function Home(props:Props) {
         mx="auto"
         w="90%"
       >
-      <Flex
-        direction="column"
-        gap="5"
-        mt="10"
-        p="5"
-        mx="auto"
-        maxW={{ base: "sm", md: "xl" }}
-        w="full"
-        rounded="2xl"
-        borderWidth="1px"
-        borderColor="gray.600"
-        bg="gray.800"
-      >
-        <h2 style={headlineStyle}>Wrap/Unwrap VTRU</h2>
         <Flex
-          direction={currentFrom === "wrapped" ? "column" : "column-reverse"}
-          gap="3"
-        >
-
-          <SwapInput
-            current={currentFrom}
-            type="wrapped"
-            max={wrappedBalance.toFixed(2)}
-            value={String(Math.floor(Number(swapValue)).toFixed(0))}
-            setValue={setSwapValue}
-            tokenSymbol="wVTRU"
-            tokenBalance={wrappedBalance.toFixed(2)}
-            network="vitruveo"
-          />
-
-          <Button
-            onClick={() => {
-              currentFrom === "wrapped"
-                ? setCurrentFrom("unwrapped")
-                : setCurrentFrom("wrapped")
-            }}
-            maxW="5"
-            mx="auto"
-          >
-            ↓
-          </Button>
-
-          <SwapInput
-            current={currentFrom}
-            type="unwrapped"
-            max={unwrappedBalance.toFixed(2)}
-            value={String(Math.floor(Number(swapValue)).toFixed(0))}
-            setValue={setSwapValue}
-            tokenSymbol="VTRU"
-            tokenBalance={unwrappedBalance.toFixed(2)}
-            network="vitruveo"
-          />
-        </Flex>
-
-
-        {address ? (
-          <Button
-            onClick={executeBridge}
-            py="7"
-            fontSize="2xl"
-            colorScheme="purple"
-            rounded="xl"
-            isDisabled={loading || inputInvalid()}
-            style={{ fontWeight: 400, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
-          >
-            {loading ? <Spinner /> : currentFrom === "wrapped" ? "Unwrap" : "Wrap"}
-          </Button>
-        ) : (
-          <ConnectWallet
-            style={{ padding: "20px 0px", fontSize: "18px" }}
-            theme="dark"
-          />
-        )}
-      </Flex>
-      <Flex
-        direction="column"
-        gap="5"
-        mt="10"
-        p="5"
-        mx="auto"
-        maxW={{ base: "sm", md: "xl" }}
-        w="full"
-        rounded="2xl"
-        borderWidth="1px"
-        borderColor="gray.600"
-        bg="gray.800"
-      >
-        <h2 style={headlineStyle}>Circuit Breaker Analytics</h2>
-        <Flex
-          gap="3"
           direction="column"
+          gap="5"
+          mt="10"
+          p="5"
+          mx="auto"
+          maxW={{ base: "sm", md: "xl" }}
+          w="full"
+          rounded="2xl"
+          borderWidth="1px"
+          borderColor="gray.600"
+          bg="gray.800"
         >
-          <CircuitBreaker />
-        </Flex>
+          <h2 style={headlineStyle}>Wrap/Unwrap VTRU</h2>
+          <Flex
+            direction={currentFrom === "wrapped" ? "column" : "column-reverse"}
+            gap="3"
+          >
 
-      </Flex>
+            <SwapInput
+              current={currentFrom}
+              type="wrapped"
+              max={wrappedBalance.toFixed(2)}
+              value={String(Math.floor(Number(swapValue)).toFixed(0))}
+              setValue={setSwapValue}
+              tokenSymbol="wVTRU"
+              tokenBalance={wrappedBalance.toFixed(2)}
+              network="vitruveo"
+            />
+
+            <Button
+              onClick={() => {
+                currentFrom === "wrapped"
+                  ? setCurrentFrom("unwrapped")
+                  : setCurrentFrom("wrapped")
+              }}
+              maxW="5"
+              mx="auto"
+            >
+              ↓
+            </Button>
+
+            <SwapInput
+              current={currentFrom}
+              type="unwrapped"
+              max={unwrappedBalance.toFixed(2)}
+              value={String(Math.floor(Number(swapValue)).toFixed(0))}
+              setValue={setSwapValue}
+              tokenSymbol="VTRU"
+              tokenBalance={unwrappedBalance.toFixed(2)}
+              network="vitruveo"
+            />
+          </Flex>
+
+
+          {address ? (
+            <Button
+              onClick={executeBridge}
+              py="7"
+              fontSize="2xl"
+              colorScheme="purple"
+              rounded="xl"
+              isDisabled={loading || inputInvalid()}
+              style={{ fontWeight: 400, background: 'linear-gradient(106.4deg, rgb(255, 104, 192) 11.1%, rgb(104, 84, 249) 81.3%)', color: '#ffffff'}}
+            >
+              {loading ? <Spinner /> : currentFrom === "wrapped" ? "Unwrap" : "Wrap"}
+            </Button>
+          ) : (
+            <ConnectWallet
+              style={{ padding: "20px 0px", fontSize: "18px" }}
+              theme="dark"
+            />
+          )}
+        </Flex>
+        {
+          typeof address != 'undefined' ?
+              <Flex
+                  direction="column"
+                  gap="5"
+                  p="5"
+                  mx="auto"
+                  maxW={{ base: "sm", md: "xl" }}
+                  w="full"
+                  rounded="2xl"
+                  borderWidth="1px"
+                  borderColor="gray.600"
+                  bg="gray.800"
+                >
+                  <h2 style={headlineStyle}>User Constraints</h2>
+                  <Flex
+                    gap="3"
+                    direction="column"
+                  >
+                      <UserInfo account={typeof address == 'undefined' ? '' : address} />
+                  </Flex>
+
+                </Flex>
+                :
+                <></>
+        }
+
+          <Flex
+            direction="column"
+            gap="5"
+            p="5"
+            mx="auto"
+            maxW={{ base: "sm", md: "xl" }}
+            w="full"
+            rounded="2xl"
+            borderWidth="1px"
+            borderColor="gray.600"
+            bg="gray.800"
+          >
+            <h2 style={headlineStyle}>Circuit Breaker Analytics</h2>
+            <Flex
+              gap="3"
+              direction="column"
+            >
+              <CircuitBreaker />
+            </Flex>
+
+          </Flex>
       </Flex>
       <h2 style={{textAlign: 'center', padding: '5px', fontSize: '20px', fontWeight: 'bold', color: 'white'}}><a href="https://docs.google.com/spreadsheets/d/1JG5EuuEy5T4vxSiTR4ufN2NVEYw2hmpMeDwwcaa3qg8/edit?usp=sharing" target="_new">Circuit Breaker Constraints</a></h2>
       <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a> and <a href="https://www.neoncircus.xyz/" target="_new">Neon Circus</a>.</div>

@@ -88,7 +88,7 @@ export default function CircuitBreaker() {
 
       <tr>
         <th className="statLabel">Current User Period</th>
-        <td className="statValue">{epochPeriod.toLocaleString()}</td>
+        <td className="statValue">{parseInt(String(epochPeriod))}</td>
         <td className="statInfo">User cooldown period — hours to wait until wrap is allowed</td>
       </tr>
 
