@@ -131,7 +131,7 @@ export default function Home(props:Props) {
         status: "error",
         title: currentFrom === 'unwrapped' ? "Wrap Failed" : "Unwrap Failed",
         description:
-          "There was an error. Please try again.",
+          "The wrap failed due to circuit breaker constraints.",
       });
       setLoading(false);
     }
