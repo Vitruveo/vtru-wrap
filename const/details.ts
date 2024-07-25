@@ -616,7 +616,7 @@ export const WRAP_CONTRACT_ABI: string = `[
     },
     {
       "inputs": [],
-      "name": "nextEpochStart",
+      "name": "epochNext",
       "outputs": [
         {
           "internalType": "uint256",
