@@ -26,10 +26,10 @@ export default function CircuitBreaker() {
       const cbInfo = await wrapContract.call('circuitBreakerInfo');
       setNextEpoch(Number(await wrapContract.call('epochNext')));
       setPrice(Number(cbInfo[0])/100);
-      setTotalEpochWrapLimit(Number(cbInfo[1])/DECIMALS);
-      setTotalEpochWrapped(Number(cbInfo[5])/DECIMALS);
-      setTotalWrapped(Number(cbInfo[4])/DECIMALS);
-      setUserPeriodWrapLimit(Number(cbInfo[2])/DECIMALS);
+      setTotalEpochWrapLimit(Number(cbInfo[1]));
+      setTotalEpochWrapped(Number(cbInfo[5]));
+      setTotalWrapped(Number(cbInfo[4]));
+      setUserPeriodWrapLimit(Number(cbInfo[2]));
       setEpochPeriod(Number((Number(cbInfo[3])*5)/3600));
         // currentPrice in cents
       // totalEpochWrap limit
