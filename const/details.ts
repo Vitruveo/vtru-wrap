@@ -504,7 +504,33 @@ export const WRAP_CONTRACT_ABI: string = `[
     },
     {
       "inputs": [],
+      "name": "epochCurrentBlock",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "epochNext",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "epochNextBlock",
       "outputs": [
         {
           "internalType": "uint256",
@@ -674,6 +700,35 @@ export const WRAP_CONTRACT_ABI: string = `[
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "startEpoch",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endEpoch",
+          "type": "uint256"
+        }
+      ],
+      "name": "priceRange",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "blockNumbers",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "prices",
+          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",
