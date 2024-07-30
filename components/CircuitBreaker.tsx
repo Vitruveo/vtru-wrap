@@ -24,7 +24,7 @@ export default function CircuitBreaker() {
         setLoaded(true);
       const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT);
       const cbInfo = await wrapContract.call('circuitBreakerInfo');
-      setNextEpoch(Number(await wrapContract.call('epochNext')));
+      setNextEpoch(Number(await wrapContract.call('epochNextBlock')));
       setPrice(Number(cbInfo[0])/100);
       setTotalEpochWrapLimit(Number(cbInfo[1]));
       setTotalEpochWrapped(Number(cbInfo[5]));
