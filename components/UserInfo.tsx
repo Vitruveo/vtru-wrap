@@ -16,7 +16,7 @@ export default function UserInfo({account}:any) {
       if (!loaded) {
       try {
         setLoaded(true);
-            const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT);
+            const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT, JSON.parse(WRAP_CONTRACT_ABI));
             const userInfo = await wrapContract.call('userInfo', [account]);
             setLastEpoch(Number(userInfo[1]));
             setNextEpoch(Number(userInfo[2]));

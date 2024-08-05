@@ -31,8 +31,6 @@ export default function Home(props:Props) {
   const toast = useToast();
   const address = useAddress();
 
-  const wrapContractAbi = JSON.parse(WRAP_CONTRACT_ABI);
-
   const [wrappedBalance, setWrappedBalance] = useState(0);
   const [unwrappedBalance, setUnwrappedBalance] = useState(0);
 
@@ -42,6 +40,10 @@ export default function Home(props:Props) {
   const [loading, setLoading] = useState<boolean>(false);
 
   const vitruveoProvider = new ThirdwebSDK(VITRUVEO_CHAIN);
+  const { contract: wrapContract } = useContract(WRAP_CONTRACT, JSON.parse(WRAP_CONTRACT_ABI));
+
+  const { mutateAsync: wrap } = useContractWrite(wrapContract, "wrap"); 
+  const { mutateAsync: unwrap } = useContractWrite(wrapContract, "unwrap"); 
 
   // Need to read from both networks regardless of which is connected so we fall back to SDK
   useEffect(() => {
@@ -53,7 +55,6 @@ export default function Home(props:Props) {
       }
 
       try {
-        const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT);
         const wrappedBalance = await wrapContract.call('balanceOf', [address]);
         setWrappedBalance(parseFloat(ethers.utils.formatEther(wrappedBalance)));
 
@@ -72,7 +73,7 @@ export default function Home(props:Props) {
 
     return () => clearInterval(interval);
   
-  }, [address, loading]);
+  }, [wrapContract, address, loading]);
 
   useEffect(() => {
     async function activateChain() {
@@ -92,10 +93,6 @@ export default function Home(props:Props) {
     return Number(swapValue) <= 0 || tooBig;
   }
 
-  const { contract: wrapContract } = useContract(WRAP_CONTRACT, wrapContractAbi);
-
-  const { mutateAsync: wrap } = useContractWrite(wrapContract, "wrap"); 
-  const { mutateAsync: unwrap } = useContractWrite(wrapContract, "unwrap"); 
 
   const executeBridge = async () => {
     setLoading(true);

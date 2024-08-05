@@ -22,7 +22,8 @@ export default function CircuitBreaker() {
     if (!loaded) {
       try {
         setLoaded(true);
-      const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT);
+
+      const wrapContract = await vitruveoProvider.getContract(WRAP_CONTRACT, JSON.parse(WRAP_CONTRACT_ABI));
       const cbInfo = await wrapContract.call('circuitBreakerInfo');
       setNextEpoch(Number(await wrapContract.call('epochNextBlock')));
       setPrice(Number(cbInfo[0])/100);
@@ -31,15 +32,7 @@ export default function CircuitBreaker() {
       setTotalWrapped(Number(cbInfo[4]));
       setUserPeriodWrapLimit(Number(cbInfo[2]));
       setEpochPeriod(Number((Number(cbInfo[3])*5)/3600));
-        // currentPrice in cents
-      // totalEpochWrap limit
-      // userWrapLimit
-      // epochPeriod
 
-      //setWrappedBalance(parseFloat(ethers.utils.formatEther(wrappedBalance)));
-
-      //const balance = await vitruveoProvider.getBalance(address);
-      //setUnwrappedBalance(Number(balance.displayValue));  
     } catch(e) {
       console.error(e);
     }
