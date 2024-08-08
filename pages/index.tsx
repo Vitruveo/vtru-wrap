@@ -178,6 +178,7 @@ export default function Home(props:Props) {
           bg="gray.800"
         >
           <h2 style={headlineStyle}>Wrap/Unwrap VTRU</h2>
+          <h3>NOTE: Wrapping VTRU will work only if amount is greater than 99, and individual/aggregate epoch Circuit Breaker limits have not been reached.</h3>
           <Flex
             direction={currentFrom === "wrapped" ? "column" : "column-reverse"}
             gap="3"
