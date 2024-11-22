@@ -178,7 +178,7 @@ export default function Home(props:Props) {
           bg="gray.800"
         >
           <h2 style={headlineStyle}>Wrap/Unwrap VTRU</h2>
-          <h3>NOTE: Wrapping VTRU will work only if amount is greater than 99, and individual/aggregate epoch Circuit Breaker limits have not been reached.</h3>
+          {/* <h3>NOTE: Wrapping VTRU will work only if amount is greater than 99, and individual/aggregate epoch Circuit Breaker limits have not been reached.</h3> */}
           <Flex
             direction={currentFrom === "wrapped" ? "column" : "column-reverse"}
             gap="3"
@@ -239,7 +239,7 @@ export default function Home(props:Props) {
             />
           )}
         </Flex>
-        {
+        {/* {
           typeof address != 'undefined' ?
               <Flex
                   direction="column"
@@ -264,8 +264,8 @@ export default function Home(props:Props) {
                 </Flex>
                 :
                 <></>
-        }
-
+        } */}
+{/* 
           <Flex
             direction="column"
             gap="5"
@@ -287,8 +287,10 @@ export default function Home(props:Props) {
             </Flex>
 
           </Flex>
+*/}
       </Flex>
-      <h2 style={{textAlign: 'center', padding: '5px', fontSize: '20px', fontWeight: 'bold', color: 'white'}}><a href="https://docs.google.com/spreadsheets/d/1JG5EuuEy5T4vxSiTR4ufN2NVEYw2hmpMeDwwcaa3qg8/edit?usp=sharing" target="_new">Circuit Breaker Constraints</a></h2>
+      {/* <h2 style={{textAlign: 'center', padding: '5px', fontSize: '20px', fontWeight: 'bold', color: 'white'}}><a href="https://docs.google.com/spreadsheets/d/1JG5EuuEy5T4vxSiTR4ufN2NVEYw2hmpMeDwwcaa3qg8/edit?usp=sharing" target="_new">Circuit Breaker Constraints</a></h2> */}
+
       <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a> and <a href="https://www.neoncircus.xyz/" target="_new">Neon Circus</a>.</div>
     </ div>
   );
