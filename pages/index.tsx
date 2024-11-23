@@ -103,7 +103,8 @@ export default function Home(props:Props) {
         await wrap({
           args: [],
           overrides: {
-            value: ethers.utils.parseUnits(amount.toString(), 18)
+            value: ethers.utils.parseUnits(amount.toString(), 18),
+            gasLimit: 100000
           }
         });
 
@@ -114,7 +115,12 @@ export default function Home(props:Props) {
         });
 
       } else {
-        await unwrap({ args: [ethers.utils.parseUnits(amount.toString(), 18)] });
+        await unwrap({ 
+          args: [ethers.utils.parseUnits(amount.toString(), 18)],
+          overrides: {
+            gasLimit: 100000
+          } 
+        });
 
         toast({
           status: "success",
