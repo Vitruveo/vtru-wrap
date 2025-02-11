@@ -24,7 +24,7 @@ export default function SwapInput({
 }: Props) {
   return (
     <HStack w="full" bgColor="gray.700" rounded="2xl" px="5">
-      <img src={`/images/${tokenSymbol}.png`} alt={`${network}`} style={{ display: 'inline', height: '25px' }}/> 
+      <img src={`/images/${tokenSymbol?.toLowerCase()}.png`} alt={`${network}`} style={{ display: 'inline', height: '25px' }}/> 
       <Input
         type="number"
         placeholder="0.0"
