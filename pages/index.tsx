@@ -55,11 +55,13 @@ export default function Home(props:Props) {
       }
 
       try {
-        const wrappedBalance = await wrapContract.call('balanceOf', [address]);
-        setWrappedBalance(parseFloat(ethers.utils.formatEther(wrappedBalance)));
+        const wrappedBalance = Number(ethers.utils.formatEther(await wrapContract.call('balanceOf', [address])));
+        const tmpWrappedBalance = wrappedBalance >= 1  ? wrappedBalance - 1 : wrappedBalance;
+        setWrappedBalance(tmpWrappedBalance);
 
-        const balance = await vitruveoProvider.getBalance(address);
-        setUnwrappedBalance(Number(balance.displayValue));  
+        const balance = Number(ethers.utils.formatEther((await vitruveoProvider.getBalance(address)).value));
+        const tmpBalance = balance >= 1 ? balance - 1 : balance;
+        setUnwrappedBalance(tmpBalance);  
       } catch(e) {
         console.error(e);
       }
@@ -135,7 +137,7 @@ export default function Home(props:Props) {
         status: "error",
         title: currentFrom === 'unwrapped' ? "Wrap Failed" : "Unwrap Failed",
         description:
-          "The wrap failed due to circuit breaker constraints.",
+          "The wrap failed due to supply restrictions currently in place.",
       });
       setLoading(false);
     }
@@ -297,7 +299,9 @@ export default function Home(props:Props) {
       </Flex>
       {/* <h2 style={{textAlign: 'center', padding: '5px', fontSize: '20px', fontWeight: 'bold', color: 'white'}}><a href="https://docs.google.com/spreadsheets/d/1JG5EuuEy5T4vxSiTR4ufN2NVEYw2hmpMeDwwcaa3qg8/edit?usp=sharing" target="_new">Circuit Breaker Constraints</a></h2> */}
 
-      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a> and <a href="https://www.neoncircus.xyz/" target="_new">Neon Circus</a>.</div>
+      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Reported balances reduced by 1 to prevent rounding and gas fee errors.</div>
+
+      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Built with 💜 by <a href="https://www.vitruveo.xyz" target="_new">Vitruveo</a>.</div>
     </ div>
   );
 }
