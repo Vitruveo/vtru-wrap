@@ -11,7 +11,7 @@ import {
   Spinner,
   useToast,
 } from "@chakra-ui/react";
-import { VITRUVEO_CHAIN, WRAP_CONTRACT, WRAP_CONTRACT_ABI } from "../const/details";
+import { VITRUVEO_CHAIN, WRAP_CONTRACT, WRAP_CONTRACT_ABI, SUPPLY_SENTRY_ABI } from "../const/details";
 import {
   ConnectWallet,
   useAddress,
@@ -39,8 +39,12 @@ export default function Home(props:Props) {
   const [currentFrom, setCurrentFrom] = useState<string>("wrapped");
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [tradeBalance, setTradeBalance] = useState(0);
+
+  const SUPPLY_SENTRY_CONTRACT = '0x00d266bD859D5d9e54D6dB1aC774E56352c53705';
   const vitruveoProvider = new ThirdwebSDK(VITRUVEO_CHAIN);
   const { contract: wrapContract } = useContract(WRAP_CONTRACT, JSON.parse(WRAP_CONTRACT_ABI));
+  const { contract: supplySentryContract } = useContract(SUPPLY_SENTRY_CONTRACT, JSON.parse(SUPPLY_SENTRY_ABI));
 
   const { mutateAsync: wrap } = useContractWrite(wrapContract, "wrap"); 
   const { mutateAsync: unwrap } = useContractWrite(wrapContract, "unwrap"); 
@@ -62,6 +66,9 @@ export default function Home(props:Props) {
         const balance = Number(ethers.utils.formatEther((await vitruveoProvider.getBalance(address)).value));
         const tmpBalance = balance >= 1 ? balance - 1 : balance;
         setUnwrappedBalance(tmpBalance);  
+
+        setTradeBalance(await supplySentryContract.call('tradeBalance', [address, 1490]));
+
       } catch(e) {
         console.error(e);
       }
@@ -298,6 +305,8 @@ export default function Home(props:Props) {
 */}
       </Flex>
       {/* <h2 style={{textAlign: 'center', padding: '5px', fontSize: '20px', fontWeight: 'bold', color: 'white'}}><a href="https://docs.google.com/spreadsheets/d/1JG5EuuEy5T4vxSiTR4ufN2NVEYw2hmpMeDwwcaa3qg8/edit?usp=sharing" target="_new">Circuit Breaker Constraints</a></h2> */}
+
+      <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Wrap Allowance to wVTRU: {(Number(tradeBalance)/Math.pow(10,18)).toLocaleString()}</div>
 
       <div style={{textAlign: 'center', fontSize: '14px', marginTop: '5px'}}>Reported balances reduced by 1 to prevent rounding and gas fee errors.</div>
 
